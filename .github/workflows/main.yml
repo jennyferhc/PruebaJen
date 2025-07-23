@@ -1,14 +1,6 @@
-name: Revisar HTML y CSS
+name: Revisar Código HTML, CSS y JS
 
-on:
-  push:
-    paths:
-      - '**.html'
-      - '**.css'
-  pull_request:
-    paths:
-      - '**.html'
-      - '**.css'
+on: [push, pull_request]
 
 jobs:
   lint:
@@ -23,12 +15,42 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Instalar htmlhint y stylelint
+      - name: Instalar linters
         run: |
-          npm install -g htmlhint stylelint
+          npm init -y
+          npm install --save-dev eslint@8 stylelint htmlhint
 
-      - name: Revisar archivos HTML
-        run: htmlhint "**/*.html"
+      - name: Crear configuración de linters
+        run: |
+          echo '{
+            "env": {
+              "browser": true,
+              "es2021": true
+            },
+            "parserOptions": {
+              "ecmaVersion": 12
+            },
+            "rules": {
+              "no-unused-vars": "warn",
+              "no-undef": "error"
+            }
+          }' > .eslintrc.json
 
-      - name: Revisar archivos CSS
-        run: stylelint "**/*.css" || true
+          echo '{
+            "rules": {
+              "block-no-empty": true,
+              "color-no-invalid-hex": true,
+              "declaration-block-no-duplicate-properties": true
+            }
+          }' > .stylelintrc.json
+
+          echo '{}' > .htmlhintrc
+
+      - name: Ejecutar HTMLHint
+        run: npx htmlhint "*/.html"
+
+      - name: Ejecutar Stylelint
+        run: npx stylelint "*/.css"
+
+      - name: Ejecutar ESLint
+        run: npx eslint "*/.js"
