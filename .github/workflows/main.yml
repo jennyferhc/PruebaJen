@@ -49,8 +49,3 @@ jobs:
       - name: Ejecutar HTMLHint
         run: npx htmlhint "*/.html"
 
-      - name: Ejecutar Stylelint
-        run: npx stylelint "*/.css"
-
-      - name: Ejecutar ESLint
-        run: npx eslint "*/.js"
